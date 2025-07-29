@@ -43,4 +43,11 @@ public abstract class CoreConfigs extends LibConfigs {
         }
     }
 
+    /**************************************************
+     * ui适配
+     **************************************************/
+    public float getDensity() {
+        return 360f;
+    }
+
 }

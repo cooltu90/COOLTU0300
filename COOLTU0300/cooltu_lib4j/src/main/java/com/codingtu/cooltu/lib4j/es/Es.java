@@ -311,6 +311,10 @@ public class Es {
     /**************************************************
      *
      **************************************************/
+    public static <K, V> BaseMap<K, V> maps() {
+        return new BaseMap(null);
+    }
+
     public static <K, V> BaseMap<K, V> maps(Map<K, V> map) {
         return new BaseMap(map);
     }
