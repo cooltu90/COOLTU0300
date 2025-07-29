@@ -488,7 +488,7 @@ public class StringEs extends CoreEs<String, StringEs> {
         return new ToLine(this);
     }
 
-    public String toGenericities() {
+    public String toFanxings() {
         return toLine().prefix("<").suffix(">").to();
     }
 
