@@ -5,10 +5,13 @@ import com.codingtu.cooltu.lib.ui.page.BaseWelcomeActivity;
 import com.codingtu.cooltu.processor.annotation.activity.ActBase;
 import com.codingtu.cooltu.processor.annotation.base.BaseClass;
 import com.codingtu.cooltu.processor.annotation.base.Fanxing;
+import com.codingtu.cooltu.processor.annotation.to.To;
 import com.codingtu.cooltu.processor.annotation.ui.Layout;
 
 import core.app.actbase.WelcomeActivityBase;
+import core.app.actconfig.WelcomeActivityConfig;
 
+@To(WelcomeActivityConfig.class)
 @ActBase
 @Layout(R.layout.activity_welcome)
 @BaseClass(

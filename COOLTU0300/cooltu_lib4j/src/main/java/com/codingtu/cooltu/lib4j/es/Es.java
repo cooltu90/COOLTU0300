@@ -333,4 +333,12 @@ public class Es {
         });
     }
 
+    /**************************************************
+     *
+     **************************************************/
+    public static <K> boolean hasField(BaseMap<K, Boolean> map, K k) {
+        Boolean aBoolean = map.get(k);
+        return aBoolean != null && aBoolean;
+    }
+
 }
