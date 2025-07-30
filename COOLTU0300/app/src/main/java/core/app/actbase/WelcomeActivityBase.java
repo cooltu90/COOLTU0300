@@ -1,7 +1,8 @@
 package core.app.actbase;
 
 public abstract class WelcomeActivityBase<T extends com.codingtu.cooltu.lib.data.User, F>
-        extends com.codingtu.cooltu.lib.ui.page.BaseWelcomeActivity<T, java.lang.String, F> {
+        extends com.codingtu.cooltu.lib.ui.page.BaseWelcomeActivity<T, java.lang.String, F>
+        implements android.view.View.OnClickListener {
 
     protected android.view.ViewGroup rootViewGroup;
     protected android.widget.LinearLayout ll0;
@@ -39,6 +40,22 @@ public abstract class WelcomeActivityBase<T extends com.codingtu.cooltu.lib.data
 
     private int getLayout() {
         return com.codingtu.cooltu.R.layout.activity_welcome;
+    }
+
+    @Override
+    public void onClick(android.view.View v) {
+        try {
+            switch (v.getId()) {
+                case com.codingtu.cooltu.R.id.tv:
+                case com.codingtu.cooltu.R.id.ll:
+                    break;
+            }
+        } catch (Exception e) {
+            com.codingtu.cooltu.lib4a.log.Logs.e(e);
+            if (!(e instanceof com.codingtu.cooltu.lib4a.exception.NotToastException)) {
+                toast(e.getMessage());
+            }
+        }
     }
 
 }

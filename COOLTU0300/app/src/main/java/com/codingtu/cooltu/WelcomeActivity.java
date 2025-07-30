@@ -1,11 +1,14 @@
 package com.codingtu.cooltu;
 
+import android.view.View;
+
 import com.codingtu.cooltu.lib.data.User;
 import com.codingtu.cooltu.lib.ui.page.BaseWelcomeActivity;
 import com.codingtu.cooltu.processor.annotation.activity.ActBase;
 import com.codingtu.cooltu.processor.annotation.base.BaseClass;
 import com.codingtu.cooltu.processor.annotation.base.Fanxing;
 import com.codingtu.cooltu.processor.annotation.to.To;
+import com.codingtu.cooltu.processor.annotation.ui.ClickView;
 import com.codingtu.cooltu.processor.annotation.ui.Layout;
 
 import core.app.actbase.WelcomeActivityBase;
@@ -22,4 +25,8 @@ import core.app.actconfig.WelcomeActivityConfig;
                 @Fanxing(name = "F"),
         })
 public class WelcomeActivity extends WelcomeActivityBase<User, User> {
+    @ClickView({R.id.tv, R.id.ll})
+    public void tvClick(View view) {
+
+    }
 }

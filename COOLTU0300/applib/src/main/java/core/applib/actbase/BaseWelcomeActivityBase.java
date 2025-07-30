@@ -1,7 +1,8 @@
 package core.applib.actbase;
 
 public abstract class BaseWelcomeActivityBase
-        extends com.codingtu.cooltu.lib.ui.page.BaseActivity {
+        extends com.codingtu.cooltu.lib.ui.page.BaseActivity
+        implements android.view.View.OnClickListener {
 
     public String baseClassName = "BaseWelcomeActivityBase";
 
@@ -12,6 +13,10 @@ public abstract class BaseWelcomeActivityBase
         if (nowBaseClassName.equals(baseClassName)) {
             onCreateComplete();
         }
+    }
+
+    @Override
+    public void onClick(android.view.View v) {
     }
 
 }

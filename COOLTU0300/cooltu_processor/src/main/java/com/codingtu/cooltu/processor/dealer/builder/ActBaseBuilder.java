@@ -14,16 +14,23 @@ import com.codingtu.cooltu.lib4j.tools.TagTool;
 import com.codingtu.cooltu.processor.BuilderType;
 import com.codingtu.cooltu.processor.annotation.base.BaseClass;
 import com.codingtu.cooltu.processor.annotation.base.Fanxing;
+import com.codingtu.cooltu.processor.annotation.ui.ClickView;
 import com.codingtu.cooltu.processor.container.BuilderMap;
 import com.codingtu.cooltu.processor.dealer.builder.base.BaseBuilder;
 import com.codingtu.cooltu.processor.tools.BuilderTool;
+import com.codingtu.cooltu.processor.tools.ElementTool;
 import com.codingtu.cooltu.processor.tools.IdTool;
 import com.codingtu.cooltu.processor.tools.LayoutTool;
+
+import java.util.Map;
+
+import javax.lang.model.element.ExecutableElement;
 
 public class ActBaseBuilder extends BaseBuilder {
 
     public BaseClass baseClass;
     public IdTool.Id layoutId;
+    public BaseEs<ExecutableElement> clickViewEs;
     private LayoutTool.ViewInfo viewInfo;
 
     public BaseMap<String, Boolean> fieldMap = Es.maps();
@@ -62,11 +69,14 @@ public class ActBaseBuilder extends BaseBuilder {
         dealViewInfo();
         addField("baseClassName", TagTool.dealLine("    public String baseClassName = \"[BaseWelcomeActivityBase]\";", javaInfo.name));
 
+        //类头
         addLine("");
         addLine("public abstract class [ActivityBase][fanxings]", javaInfo.name, actBaseFanxingStrEs.toFanxings());
-        addLine("        extends [baseClass][fanxings] {", baseClassFullName.value, baseFanxingStrEs.toFanxings());
+        addLine("        extends [baseClass][fanxings]", baseClassFullName.value, baseFanxingStrEs.toFanxings());
+        addLine("        implements android.view.View.OnClickListener {");
         addLine("");
 
+        //字段
         fieldLines.ls(new Es.EachEs<String>() {
             @Override
             public boolean each(int position, String fieldLine) {
@@ -75,8 +85,8 @@ public class ActBaseBuilder extends BaseBuilder {
             }
         });
 
+        //oncreate
         addLine("");
-
         addLine("    @Override");
         addLine("    protected void onCreate(android.os.Bundle savedInstanceState) {");
         addLine("        super.onCreate(savedInstanceState);");
@@ -84,7 +94,7 @@ public class ActBaseBuilder extends BaseBuilder {
             addLine("        setContentView(getLayout());");
         }
 
-
+        //findView
         findViewLines.ls(new Es.EachEs<String>() {
             @Override
             public boolean each(int position, String s) {
@@ -97,14 +107,53 @@ public class ActBaseBuilder extends BaseBuilder {
         addLine("        if (nowBaseClassName.equals(baseClassName)) {");
         addLine("            onCreateComplete();");
         addLine("        }");
-
         addLine("    }");
+
+        //getLayout
         if (layoutId != null) {
             addLine("");
             addLine("    private int getLayout() {");
             addLine("        return [layout];", layoutId.toString());
             addLine("    }");
         }
+
+        //onclick
+
+        boolean hasClickView = !clickViewEs.isNull();
+        addLine("");
+        addLine("    @Override");
+        addLine("    public void onClick(android.view.View v) {");
+        if (hasClickView) {
+            addLine("        try {");
+            addLine("            switch (v.getId()) {");
+
+            clickViewEs.ls(new Es.EachEs<ExecutableElement>() {
+                @Override
+                public boolean each(int position, ExecutableElement ee) {
+                    ClickView clickView = ee.getAnnotation(ClickView.class);
+                    Map<Integer, IdTool.Id> idMap = IdTool.elementToIds(ee, ClickView.class, clickView.value());
+                    Es.maps(idMap).ls(new Es.MapEach<Integer, IdTool.Id>() {
+                        @Override
+                        public boolean each(Integer integer, IdTool.Id id) {
+                            addLine("                case [com.codingtu.cooltu.R.id.tv]:",id.toString());
+                            return false;
+                        }
+                    });
+                    addLine("                    break;");
+                    return false;
+                }
+            });
+
+            addLine("            }");
+            addLine("        } catch (Exception e) {");
+            addLine("            com.codingtu.cooltu.lib4a.log.Logs.e(e);");
+            addLine("            if (!(e instanceof com.codingtu.cooltu.lib4a.exception.NotToastException)) {");
+            addLine("                toast(e.getMessage());");
+            addLine("            }");
+            addLine("        }");
+        }
+        addLine("    }");
+
         addLine("");
         addLine("}");
     }
