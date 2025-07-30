@@ -17,6 +17,7 @@ public abstract class BaseWelcomeActivityBase
 
     @Override
     public void onClick(android.view.View v) {
+        super.onClick(v);
     }
 
 }

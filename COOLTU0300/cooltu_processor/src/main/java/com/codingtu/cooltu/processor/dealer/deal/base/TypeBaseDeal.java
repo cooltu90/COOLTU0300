@@ -1,7 +1,7 @@
 package com.codingtu.cooltu.processor.dealer.deal.base;
 
 import com.codingtu.cooltu.lib4j.tools.FanxingTool;
-import com.codingtu.cooltu.processor.tools.ElementTool;
+import com.codingtu.cooltu.lib4j.tools.ElementTool;
 
 import java.lang.annotation.Annotation;
 

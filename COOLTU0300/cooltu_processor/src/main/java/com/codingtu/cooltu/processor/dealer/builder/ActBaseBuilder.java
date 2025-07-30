@@ -2,7 +2,10 @@ package com.codingtu.cooltu.processor.dealer.builder;
 
 import com.codingtu.cooltu.constant.FullName;
 import com.codingtu.cooltu.constant.Pkg;
+import com.codingtu.cooltu.lib4j.convert.ToString;
+import com.codingtu.cooltu.lib4j.data.kv.KV;
 import com.codingtu.cooltu.lib4j.data.map.BaseEsValueMap;
+import com.codingtu.cooltu.lib4j.data.value.IntValue;
 import com.codingtu.cooltu.lib4j.data.value.TValue;
 import com.codingtu.cooltu.lib4j.es.BaseEs;
 import com.codingtu.cooltu.lib4j.es.Es;
@@ -18,13 +21,14 @@ import com.codingtu.cooltu.processor.annotation.ui.ClickView;
 import com.codingtu.cooltu.processor.container.BuilderMap;
 import com.codingtu.cooltu.processor.dealer.builder.base.BaseBuilder;
 import com.codingtu.cooltu.processor.tools.BuilderTool;
-import com.codingtu.cooltu.processor.tools.ElementTool;
+import com.codingtu.cooltu.lib4j.tools.ElementTool;
 import com.codingtu.cooltu.processor.tools.IdTool;
 import com.codingtu.cooltu.processor.tools.LayoutTool;
 
 import java.util.Map;
 
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.VariableElement;
 
 public class ActBaseBuilder extends BaseBuilder {
 
@@ -123,6 +127,7 @@ public class ActBaseBuilder extends BaseBuilder {
         addLine("");
         addLine("    @Override");
         addLine("    public void onClick(android.view.View v) {");
+        addLine("        super.onClick(v);");
         if (hasClickView) {
             addLine("        try {");
             addLine("            switch (v.getId()) {");
@@ -135,10 +140,31 @@ public class ActBaseBuilder extends BaseBuilder {
                     Es.maps(idMap).ls(new Es.MapEach<Integer, IdTool.Id>() {
                         @Override
                         public boolean each(Integer integer, IdTool.Id id) {
-                            addLine("                case [com.codingtu.cooltu.R.id.tv]:",id.toString());
+                            addLine("                case [com.codingtu.cooltu.R.id.tv]:", id.toString());
                             return false;
                         }
                     });
+
+                    addLine("                    [tvClick](", ElementTool.simpleName(ee));
+
+                    StringEs strs = Es.strs();
+                    IntValue indexValue = IntValue.obtain();
+                    ElementTool.getParameters(ee).ls(new Es.EachEs<VariableElement>() {
+                        @Override
+                        public boolean each(int position, VariableElement ve) {
+                            KV<String, String> kv = ElementTool.getFieldKv(ve);
+                            if (kv.k.equals(FullName.VIEW)) {
+                                addLine("                            [, ]v", position == 0 ? "" : ", ");
+                            } else {
+                                addLine("                            [, ]([User]) v.getTag(com.codingtu.cooltu.lib4a.R.id.tag_[0])"
+                                        , position == 0 ? "" : ", ", kv.k, indexValue.value);
+                                indexValue.value++;
+                            }
+                            return false;
+                        }
+                    });
+
+                    addLine("                    );");
                     addLine("                    break;");
                     return false;
                 }
@@ -154,6 +180,18 @@ public class ActBaseBuilder extends BaseBuilder {
         }
         addLine("    }");
 
+        //clickmethod
+        clickViewEs.ls(new Es.EachEs<ExecutableElement>() {
+            @Override
+            public boolean each(int position, ExecutableElement ee) {
+                String paramStr = ToString.to(ElementTool.getParameters(ee));
+                addLine("");
+                addLine("    public void [tvClick]([View v, User user]) {", ElementTool.simpleName(ee), paramStr);
+                addLine("    }");
+                return false;
+            }
+        });
+
         addLine("");
         addLine("}");
     }
@@ -165,18 +203,18 @@ public class ActBaseBuilder extends BaseBuilder {
                 String fieldLine = null;
                 String findViewLine = null;
                 if (StringTool.isBlank(viewInfo.id)) {
-                    viewInfo.id = "rootViewGroup";
+                    viewInfo.name = "rootViewGroup";
                     fieldLine = "    protected android.view.ViewGroup rootViewGroup;";
                     findViewLine = TagTool.dealLine("        rootViewGroup = [ViewTool].getRootViewGroup(this);", FullName.VIEW_TOOL);
                 } else {
-                    fieldLine = TagTool.dealLine("    protected [RelativeLayout] [rootRl];", LayoutTool.dealViewType(viewInfo.viewType), viewInfo.id);
+                    fieldLine = TagTool.dealLine("    protected [RelativeLayout] [rootRl];", LayoutTool.dealViewType(viewInfo.viewType), viewInfo.name);
                     findViewLine = TagTool.dealLine("        [rootRl] = findViewById([com.codingtu.cooltu].R.id.[rootRl]);", viewInfo.id, Pkg.R, viewInfo.id);
                 }
-                addField(viewInfo.id, fieldLine);
+                addField(viewInfo.name, fieldLine);
                 findViewLines.add(findViewLine);
                 dealViewInfo(viewInfo);
+                dealViewInfoForLines(viewInfo);
             }
-            dealViewInfoForLines(viewInfo);
         }
     }
 
@@ -191,13 +229,13 @@ public class ActBaseBuilder extends BaseBuilder {
             public boolean each(int position, LayoutTool.ViewInfo viewInfo) {
                 BaseEs<LayoutTool.ViewInfo> viewInfoEs = viewInfoMap.get(viewInfo.id);
                 if (viewInfoEs.count() == 0) {
-
+                    viewInfo.name = viewInfo.id;
                 } else if (viewInfoEs.count() == 1) {
                     LayoutTool.ViewInfo viewInfo0 = viewInfoEs.getByIndex(0);
-                    viewInfo0.id += "0";
-                    viewInfo.id += "1";
+                    viewInfo0.name += "0";
+                    viewInfo.name = viewInfo.id + "1";
                 } else {
-                    viewInfo.id += viewInfoEs.count();
+                    viewInfo.name = viewInfo.id + viewInfoEs.count();
                 }
                 viewInfoEs.add(viewInfo);
                 dealViewInfo(viewInfo);
@@ -210,9 +248,9 @@ public class ActBaseBuilder extends BaseBuilder {
         viewInfo.childs.ls(new Es.EachEs<LayoutTool.ViewInfo>() {
             @Override
             public boolean each(int position, LayoutTool.ViewInfo child) {
-                addField(child.id, TagTool.dealLine("    protected [RelativeLayout] [rootRl];", LayoutTool.dealViewType(child.viewType), child.id));
-                findViewLines.add(TagTool.dealLine("        [ll0] = ([LinearLayout]) [rootViewGroup].getChildAt([0]);", child.id,
-                        LayoutTool.dealViewType(child.viewType), viewInfo.id, position));
+                addField(child.name, TagTool.dealLine("    protected [RelativeLayout] [rootRl];", LayoutTool.dealViewType(child.viewType), child.name));
+                findViewLines.add(TagTool.dealLine("        [ll0] = ([LinearLayout]) [rootViewGroup].getChildAt([0]);", child.name,
+                        LayoutTool.dealViewType(child.viewType), viewInfo.name, position));
                 dealViewInfoForLines(child);
                 return false;
             }

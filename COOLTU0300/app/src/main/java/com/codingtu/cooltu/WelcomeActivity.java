@@ -26,7 +26,7 @@ import core.app.actconfig.WelcomeActivityConfig;
         })
 public class WelcomeActivity extends WelcomeActivityBase<User, User> {
     @ClickView({R.id.tv, R.id.ll})
-    public void tvClick(View view) {
+    public void tvClick(View view, User user, View view1) {
 
     }
 }

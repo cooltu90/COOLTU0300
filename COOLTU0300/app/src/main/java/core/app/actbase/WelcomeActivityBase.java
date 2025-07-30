@@ -15,6 +15,7 @@ public abstract class WelcomeActivityBase<T extends com.codingtu.cooltu.lib.data
     protected android.widget.TextView tv2;
     protected android.widget.RelativeLayout rl3;
     protected android.widget.TextView tv3;
+    protected android.widget.TextView tag_0;
     public String baseClassName = "WelcomeActivityBase";
 
     @Override
@@ -32,6 +33,7 @@ public abstract class WelcomeActivityBase<T extends com.codingtu.cooltu.lib.data
         tv2 = (android.widget.TextView) rl2.getChildAt(0);
         rl3 = (android.widget.RelativeLayout) ll1.getChildAt(1);
         tv3 = (android.widget.TextView) rl3.getChildAt(0);
+        tag_0 = (android.widget.TextView) rootViewGroup.getChildAt(2);
         String nowBaseClassName = getClass().getSimpleName() + "Base";
         if (nowBaseClassName.equals(baseClassName)) {
             onCreateComplete();
@@ -44,10 +46,16 @@ public abstract class WelcomeActivityBase<T extends com.codingtu.cooltu.lib.data
 
     @Override
     public void onClick(android.view.View v) {
+        super.onClick(v);
         try {
             switch (v.getId()) {
                 case com.codingtu.cooltu.R.id.tv:
                 case com.codingtu.cooltu.R.id.ll:
+                    tvClick(
+                            v
+                            , (com.codingtu.cooltu.lib.data.User) v.getTag(com.codingtu.cooltu.lib4a.R.id.tag_0)
+                            , v
+                    );
                     break;
             }
         } catch (Exception e) {
@@ -56,6 +64,9 @@ public abstract class WelcomeActivityBase<T extends com.codingtu.cooltu.lib.data
                 toast(e.getMessage());
             }
         }
+    }
+
+    public void tvClick(android.view.View view, com.codingtu.cooltu.lib.data.User user, android.view.View view1) {
     }
 
 }

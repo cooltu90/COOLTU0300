@@ -21,6 +21,7 @@ public class LayoutTool {
         public String viewType;
         public String id;
         public int index;
+        public String name;
     }
 
     public static ViewInfo readLayout(String layoutName) {
@@ -98,7 +99,7 @@ public class LayoutTool {
     }
 
     public static void logViewInfo(ViewInfo parentViewInfo, int level) {
-        Logs.i(StringTool.repeatString(level, " ") + parentViewInfo.viewType + " " + parentViewInfo.id+" "+parentViewInfo.index);
+        Logs.i(StringTool.repeatString(level, " ") + parentViewInfo.viewType + " " + parentViewInfo.id + " " + parentViewInfo.index);
         Es.es(parentViewInfo.childs).ls(new Es.EachEs<ViewInfo>() {
             @Override
             public boolean each(int position, ViewInfo viewInfo) {

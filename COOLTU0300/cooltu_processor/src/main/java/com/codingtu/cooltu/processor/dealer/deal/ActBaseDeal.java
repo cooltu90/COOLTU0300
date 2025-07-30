@@ -8,7 +8,7 @@ import com.codingtu.cooltu.processor.annotation.ui.ClickView;
 import com.codingtu.cooltu.processor.annotation.ui.Layout;
 import com.codingtu.cooltu.processor.dealer.builder.ActBaseBuilder;
 import com.codingtu.cooltu.processor.dealer.deal.base.TypeBaseDeal;
-import com.codingtu.cooltu.processor.tools.ElementTool;
+import com.codingtu.cooltu.lib4j.tools.ElementTool;
 import com.codingtu.cooltu.processor.tools.IdTool;
 
 import javax.lang.model.element.Element;
